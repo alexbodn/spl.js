@@ -64,7 +64,8 @@ else
 	EMX_FLAGS += -Os
 endif
 
-em: dir zlib iconv sqlite proj proj-db-min geos rttopo xml2 spatialite extensions
+#em: dir zlib iconv sqlite proj proj-db-min geos rttopo xml2 spatialite extensions
+em: dir zlib iconv sqlite proj proj-db-min geos rttopo spatialite extensions
 
 dir:
 	mkdir -p $(BUILD_DIR);
@@ -205,6 +206,7 @@ rttopo: rttopo-conf
 rttopo-clean:
 	cd $(RTTOPO_SRC) && make clean;
 
+BUILD_TYPE=$(shell /usr/share/automake*/config.guess)
 # remove some irrelevant tests that will fail (still some xls tests failing)
 spatialite-conf:
 	sed -i '/check_extension/d' $(SPATIALITE_SRC)/test/Makefile.am;
@@ -215,7 +217,7 @@ spatialite-conf:
 	-rm $(SPATIALITE_SRC)/test/sql_stmt_security_tests/importxls*;
 	cd $(SPATIALITE_SRC); \
 	aclocal && automake; \
-	emconfigure ./configure $(PREFIX)  --host=none-none-none \
+	emconfigure ./configure $(PREFIX)  --host=none-none-none --build=$(BUILD_TYPE) \
 	CFLAGS="$(EMX_FLAGS) -DENABLE_MINIZIP -UOMIT_PROJ -DPROJ_NEW -ULOADABLE_EXTENSION -I$(ZLIB_SRC)/contrib" \
 	CPPFLAGS="-I$(BC_DIR)/include" \
 	LDFLAGS="-L$(BC_DIR)/lib" \
